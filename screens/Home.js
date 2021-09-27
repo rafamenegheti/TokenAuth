@@ -109,7 +109,7 @@ const Home = ({ navigation }) => {
 
 
 
-    
+
     //Limpa informações do localStorage
     async function cleanCache() {
         try {
@@ -131,15 +131,15 @@ const Home = ({ navigation }) => {
 
 
 
-/*
-    useEffect(() => {
-        getIdOnCache()
-        getTokenOnCache()
-        //console.log(idAluno)
-        //console.log(accesToken)
-
-    }, [idAluno, accesToken])
-    */
+    /*
+        useEffect(() => {
+            getIdOnCache()
+            getTokenOnCache()
+            //console.log(idAluno)
+            //console.log(accesToken)
+    
+        }, [idAluno, accesToken])
+        */
 
     function reRender(funcao) {
         for (let i = 0; i < 1; i++) {
@@ -172,13 +172,35 @@ const Home = ({ navigation }) => {
                 } //else (console.log('erooo ssss'))
             })
             .catch(function () {
-                //return "err"
+                return "err"
             }
             )
     }
+/*
+    function getProps() {
+        if (alunoRedacoes != '') {
+            for (let i = 0; i < alunoRedacoes.length; i++) {
+                console.log(alunoRedacoes.length)
+                return (<Redacoes number={alunoRedacoes[i].numero} date ={alunoRedacoes[i].created_at}/>)
+            }
+        } else {
+            return (
+                <Redacoes number="carregando..." />
+            )
+        }
+    }
+*/
 
+function getProps() {
+    if (alunoRedacoes != '') {
+        return alunoRedacoes.map((value) => <Redacoes number={value.numero} date ={value.created_at}/>)
+    } else {
+        return (
+            <Redacoes number="carregando..." />
+        )
+    }
+}
 
-    console.log(alunoRedacoes)
 
 
 
@@ -206,7 +228,7 @@ const Home = ({ navigation }) => {
                     <Text style={styles.sectionTitle}> suas redações </Text>
                 </View>
                 <View style={styles.items}>
-                    <Redacoes />
+                    {getProps()}
                 </View>
             </View>
             <TouchableOpacity style={styles.buttonAdd}>
