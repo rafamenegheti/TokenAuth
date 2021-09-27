@@ -206,6 +206,7 @@ const Home = ({ navigation }) => {
     }
 
 
+    //Pega a url da redacão
     const getIdRedacao = async (b, id) =>  {
         const AuthStr = 'Bearer '.concat(b);
         await axios.get(`https://desafio.pontue.com.br/redacao/${id}`,
@@ -235,6 +236,8 @@ const Home = ({ navigation }) => {
 
     }
 
+
+    //deleta a redação
     const deleteRedacao = async (b, id) =>  {
         const AuthStr = 'Bearer '.concat(b);
         await axios.delete(`https://desafio.pontue.com.br/redacao/${id}/delete`,
