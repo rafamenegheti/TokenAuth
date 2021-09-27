@@ -2,7 +2,9 @@ import styled from 'styled-components';
 import { View, Text, Image, TextInputs, TouchableOpacity, imageBackground } from 'react-native';
 import Constants from 'expo-constants';
 
+
 const StatusBarHeigth = Constants.statusBarHeight;
+
 
 //colors
 export const Colors = {
@@ -14,6 +16,8 @@ export const Colors = {
     green: '#10B981',
     red: '#EF4444',
 };
+
+
 
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
@@ -152,5 +156,13 @@ width: null
 
 export const ErrorCaption = styled.Text `
 text-align: center;
+margin-left: 40px;
 color: ${red}
 `
+
+export const ListContainer = styled.View`
+flex:1;
+width: 100%;
+align-items: center;
+margin-top: 50px
+`;
