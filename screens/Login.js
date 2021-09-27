@@ -32,7 +32,6 @@ import {
     ImageBackground,
     ErrorCaption
 } from './../components/styles';
-import Home from './Home';
 
 
 // Colors
@@ -67,6 +66,8 @@ const Login = ({ navigation }) => {
     getCacheValues()
 
 
+
+
     //variaveis de estado
     const [hidePassword, setHidePassword] = useState(true)
     const [email, setEmail] = useState('');
@@ -78,7 +79,7 @@ const Login = ({ navigation }) => {
 
 
     //animção da mensagem de erro
-
+/*
     const errorFadeAnim = useRef(new Animated.Value(0)).current;
     useEffect(() => {
         if (error === ' ') {
@@ -92,7 +93,7 @@ const Login = ({ navigation }) => {
             useNativeDriver: true,
         }).start();
     }, [error]);
-
+*/
     function onChangeEmail(value) {
         setEmail(value);
     }
@@ -122,10 +123,6 @@ const Login = ({ navigation }) => {
             // Error saving data
         }
 
-        navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-        });
     };
 
 
@@ -133,7 +130,7 @@ const Login = ({ navigation }) => {
 
     //função que gerencia o login
     async function authLogin(email, password) {
-        axios.post('https://desafio.pontue.com.br/auth/login',
+        await axios.post('https://desafio.pontue.com.br/auth/login',
             {
                 email: email,
                 password: password
@@ -166,9 +163,6 @@ const Login = ({ navigation }) => {
     }
 
     console.log(tokenValidate)
-
-
-    if (tokenValidate == false) {
         return (
             <StyledContainer>
                 <ImageBackground resizeMode="cover" source={require('./../assets/img/bgImage3.png')}>
@@ -226,18 +220,6 @@ const Login = ({ navigation }) => {
                 </ImageBackground>
             </StyledContainer>
         );
-    } else {
-        setTimeout(() => {
-            return (
-                <View style={[styles.container, styles.horizontal]}>
-                    <ActivityIndicator size="small" color="#0000ff" />
-                </View>
-            )
-        }, 1000)
-        return (
-            <Home />
-        )
-    }
 };
 
 

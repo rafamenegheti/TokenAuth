@@ -42,21 +42,39 @@ const Home = ({ navigation }) => {
 
 
     const [idAluno, setIdAluno] = React.useState('');
-    const [alunoRedacoes, setAlunoRedacoes] = React.useState({});
+    const [accesToken, setAccesToken] = React.useState('');
+    const [alunoRedacoes, setAlunoRedacoes] = React.useState('');
 
     //useEffect para atualizar a variavel de estado
-/*
-    useEffect(() => {
-    }, [idAluno]);
-*/
+    /*
+        useEffect(() => {
+    
+        }, [idAluno]);
+    */
 
 
     //Pega as informções que estao no localStorage
-    getCacheValues = async () => {
+
+
+
+
+    saveRedacoesOnCache = async () => {
+        try {
+            await AsyncStorage.setItem(
+                'redacoes',
+                alunoRedacoes
+            );
+        } catch (error) {
+            // Error saving data
+        }
+    };
+
+
+    getIdOnCache = async () => {
         try {
             const value = await AsyncStorage.getItem('alunoId');
             if (value !== null) {
-                return JSON.parse(value)
+                setIdAluno(value)
             } else {
                 return "sla"
             }
@@ -64,15 +82,42 @@ const Home = ({ navigation }) => {
         }
     };
 
+    getTokenOnCache = async () => {
+        setAccesToken(await AsyncStorage.getItem('token'));
+    };
+
+
+    getRedacoesOnCache = async () => {
+        setAlunoRedacoes(await AsyncStorage.getItem('redacoes'));
+    };
+
+    storeId = async () => {
+        const id = getIdOnCache()._W;
+        setIdAluno(id);
+    }
+
+    storeToken = async () => {
+        const token = getTokenOnCache()._W;
+        setAccesToken(token);
+    }
+
+    useEffect(() => {
+        storeId()
+        storeToken()
+        saveRedacoesOnCache()
+    }, [])
 
 
 
-    getCacheValues()
-    console.log(getCacheValues())
-
-
-
-
+    
+    //Limpa informações do localStorage
+    async function cleanCache() {
+        try {
+            await AsyncStorage.clear()
+        } catch (error) {
+            // Error saving data
+        }
+    };
 
     //gerencia o logOf, volta a tela e chama a função para limpar o cache
     function handleLogOut() {
@@ -84,22 +129,32 @@ const Home = ({ navigation }) => {
     }
 
 
-    //Limpa informações do localStorage
-    async function cleanCache() {
-        try {
-            await AsyncStorage.clear()
-        } catch (error) {
-            // Error saving data
+
+
+/*
+    useEffect(() => {
+        getIdOnCache()
+        getTokenOnCache()
+        //console.log(idAluno)
+        //console.log(accesToken)
+
+    }, [idAluno, accesToken])
+    */
+
+    function reRender(funcao) {
+        for (let i = 0; i < 1; i++) {
+            funcao(idAluno, accesToken)
         }
-    };
+    }
+
+    useEffect(() => {
+        reRender(getRedacoesAlunos)
+    })
 
 
-
-
-
-    const getRedacoesAlunos = async () => {
-        const AuthStr = 'Bearer '.concat("eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImVhZDM2M2QwZWRhZDkxZGMzNWZjMzllMzE1OTJlNTQ3MDQ2MmE2YjZiYjQ0OTI2MjJhYjUyYWEzZDA0ZDE1MzljNjQ4NjE3Yjg4YmU3MGM2In0.eyJhdWQiOiI0OTI5Njg4MC1hOTA5LTExZWItODE4MS0yN2RhYTkyNTQ4MTciLCJqdGkiOiJlYWQzNjNkMGVkYWQ5MWRjMzVmYzM5ZTMxNTkyZTU0NzA0NjJhNmI2YmI0NDkyNjIyYWI1MmFhM2QwNGQxNTM5YzY0ODYxN2I4OGJlNzBjNiIsImlhdCI6MTYzMjY5OTI5NiwibmJmIjoxNjMyNjk5Mjk2LCJleHAiOjE2NjQyMzUyOTYsInN1YiI6ImVmMzM0NGUwLTY2NGEtMTFlYi05OTBjLWNmNzA3MTdiMTQ2ZCIsInNjb3BlcyI6W119.DNVk6nLbYWb1VG2NtOOS50dlsF4hlMh9FVItnVwTGUlvU84S60IoVuc2QycMqP_ujoGmNLc6ogmc5FtQAFxeXdPJaHaAR81HZsd1uDtgSGsOBkMQmuxBQhVuvFlcrxYPz9xEgTJYMgeQWPaVuVf4T4okByfz9N7YCLQt237IkrTqLtBzT4DwAZdEis8rq8fbcI1RjH9Mzzoa_wfICl6j7mZYfIuSl12Fg9AEWJ6ZC0SR7KmhZeG-EuIxaNvRh-djrih3uEcoaGJg-TSy5JDKSPXYLPetDsRR8PGmkS5W8fwJrZ-cWxBWy3FztINpwWU85WV0LSCGQrIq_mOeLFivdlV0wH0tBgOJEgEAKkLyMq6Jg7t6N_DvL-7pmSQRO1W7gguv_FeQjIjXLrK0QiKpTuW80-E2hqoeWGdhgjaQUxbEUa_96JKIZfMWm81fay-fpwoJzRrMT_4rt-N20Mv2DimMI3sKbk_cFDCxLOlIJcVeQmXVB5JWF1pcf5oHtnrR4woJ6BDKqePtYEsMNTnZJNkAhtAqeoEkLmqqoH4ygloV_9aiuhnugKbVMgFHY3PEZqy4fgtNLUC_SRAOjuMrQrdzKZ-_kqdQ34k7hzzES4XCDAJIXrkydqIuBAwniq_QO8tSmRBrLxdKPc0mYYi3r5yqfcK6FBa5UbnML4m67Bs");
-        let res = await axios.get(`https://desafio.pontue.com.br/index/aluno/ef0c1f20-664a-11eb-9dbc-91c7d6b63ffc`,
+    const getRedacoesAlunos = async (a, b) => {
+        const AuthStr = 'Bearer '.concat(b);
+        await axios.get(`https://desafio.pontue.com.br/index/aluno/${a}`,
             {
                 headers: {
                     'Authorization': AuthStr,
@@ -110,14 +165,28 @@ const Home = ({ navigation }) => {
                     "Access-Control-Request-Headers": "authorization,x-requested-with"
                 }
             })
-        let data = await res.data;
-        setAlunoRedacoes(data)
+            .then(function (response) {
+                //setAlunoRedacoes(response.data.data)
+                if (alunoRedacoes == '') {
+                    setAlunoRedacoes(response.data.data)
+                } //else (console.log('erooo ssss'))
+            })
+            .catch(function () {
+                //return "err"
+            }
+            )
     }
 
-    getRedacoesAlunos()
-   
 
-    console.log(typeof alunoRedacoes)
+    console.log(alunoRedacoes)
+
+
+
+
+
+
+
+
 
 
 
@@ -137,9 +206,7 @@ const Home = ({ navigation }) => {
                     <Text style={styles.sectionTitle}> suas redações </Text>
                 </View>
                 <View style={styles.items}>
-
-                        <Redacoes  />
- 
+                    <Redacoes />
                 </View>
             </View>
             <TouchableOpacity style={styles.buttonAdd}>

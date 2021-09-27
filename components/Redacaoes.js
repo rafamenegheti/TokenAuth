@@ -43,13 +43,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         marginBottom: 20
     },
     itemLeft: {
         maxWidth: '70%',
         flexDirection: 'column',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         flexWrap: 'wrap'
     },
     itemRight: {
