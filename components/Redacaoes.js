@@ -16,7 +16,7 @@ const Redacoes = (props) => {
             </View>
             <View style={styles.itemRight}>
                 <TouchableOpacity style={styles.button}>
-                    <Ionicons name='trash-outline' size={25} style={styles.icon} />
+                    <Ionicons name='trash-outline' size={25} style={styles.icon} onPress={props.handleDelete}/>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
                     <Ionicons name='create-outline' size={25} style={styles.icon} />

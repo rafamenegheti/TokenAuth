@@ -155,6 +155,11 @@ const Home = ({ navigation }) => {
     }
 
 
+    useEffect(() => {
+        getRedacoesAlunos()
+    },[])
+
+
     /*
         function getProps() {
             if (alunoRedacoes != '') {
@@ -181,7 +186,7 @@ const Home = ({ navigation }) => {
         let fileUri = FileSystem.documentDirectory + "small.jpeg";
         FileSystem.downloadAsync(uri, fileUri)
             .then(({ uri }) => {
-                alert("A redação esta sendo baixada e aparecerá na galeria uma uma pasta chamada Recações Pontue")
+                alert("A redação esta sendo baixada e aparecerá na galeria em uma pasta chamada 'Recações Pontue'")
                 saveFile(uri);
             })
             .catch(error => {
@@ -230,6 +235,36 @@ const Home = ({ navigation }) => {
 
     }
 
+    const deleteRedacao = async (b, id) =>  {
+        const AuthStr = 'Bearer '.concat(b);
+        await axios.delete(`https://desafio.pontue.com.br/redacao/${id}/delete`,
+            {
+                headers: {
+                    'Authorization': AuthStr,
+                    "User-Agent": 'PostmanRuntime/7.28.4',
+                    'Accept': '*/*',
+                    "Accept-Encoding": 'gzip, deflate, br',
+                    'Connection': 'keep-alive',
+                    "Access-Control-Request-Headers": "authorization,x-requested-with"
+                }
+            })
+            .then(function (response) {
+                //setAlunoRedacoes(response.data.data)
+                    //console.log(response.data.data.urls[0].url)
+                    //setUrlRedacao(response.data.data.urls[0].url)
+                    console.log(response)
+                    //return(response.data.data.urls[0].url)
+            })
+            .catch(function (error) {
+                console.log(error)
+                console.log(error)
+                
+            }
+            )
+        
+
+    }
+
     const handleDownload = async (id) => {
         //console.log(await getIdRedacao(accesToken, id))
         //downloadFile(idd)
@@ -240,13 +275,27 @@ const Home = ({ navigation }) => {
         downloadFile(urlRedacao)
     }
 
+    const handleDelete = async (id) => {
+        //console.log(await getIdRedacao(accesToken, id))
+        //downloadFile(idd)
+        //console.log(getIdRedacao(accesToken, id))
+        //console.log(id)
+        //downloadFile()
+        console.log(urlRedacao)
+        getIdRedacao(accesToken, id)
+        deleteRedacao(accesToken, id)
+        alert("Redação deletada")
+
+
+    }
+
 
 
     //Gera o componente de acordo com as redações devolvidas pela API
     function getProps() {
         if (alunoRedacoes != '') {
             return (
-                alunoRedacoes.map((value) => <Redacoes key={value.numero} id={value.id} number={value.numero} date={value.created_at} handle={ () =>  handleDownload(value.id)} />)
+                alunoRedacoes.map((value) => <Redacoes key={value.numero} id={value.id} number={value.numero} date={value.created_at} handle={ () =>  handleDownload(value.id)} handleDelete={ () =>  handleDelete(value.id)}/>)
             )
         } else {
             return (

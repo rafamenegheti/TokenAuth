@@ -157,7 +157,7 @@ width: null
 export const ErrorCaption = styled.Text `
 text-align: center;
 margin-left: 40px;
-fontSize: 13;
+fontSize: 13px;
 color: ${red}
 `
 
