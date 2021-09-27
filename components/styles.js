@@ -14,7 +14,7 @@ export const Colors = {
     darkLight: '#9CA3AF',
     brand: '#6D28D9',
     green: '#10B981',
-    red: '#EF4444',
+    red: '#950F0F',
 };
 
 
@@ -157,6 +157,7 @@ width: null
 export const ErrorCaption = styled.Text `
 text-align: center;
 margin-left: 40px;
+fontSize: 13;
 color: ${red}
 `
 

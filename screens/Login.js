@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Animated, Alert, TextPropTypes, View, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import React, { useState } from 'react';
+import { Animated, View, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 import { AsyncStorage } from 'react-native';
@@ -14,7 +14,6 @@ import { Caption } from 'react-native-paper';
 import {
     StyledContainer,
     InnerContainer,
-    PageLogo,
     PageTitle,
     SubTitle,
     StyledFormArea,
@@ -26,7 +25,6 @@ import {
     StyledButton,
     ButtonText,
     MsgBox,
-    Line,
     NormalText,
     StyledNormalButton,
     ImageBackground,
@@ -59,13 +57,10 @@ const Login = ({ navigation }) => {
         } catch (error) {
             setTokenValidate(false)
             console.log(value)
-            // Error retrieving data
         }
     };
 
     getCacheValues()
-
-
 
 
     //variaveis de estado
@@ -124,8 +119,6 @@ const Login = ({ navigation }) => {
         }
 
     };
-
-
 
 
     //função que gerencia o login
@@ -248,6 +241,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+
     },
 });
 

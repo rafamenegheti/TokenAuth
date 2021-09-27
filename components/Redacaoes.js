@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextComponent, TouchableOpacity } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 
@@ -8,17 +7,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 const Redacoes = (props) => {
-
-
-    
-
-
-
     return (
         <View style={styles.item} resizeMode="cover" >
             <View style={styles.itemLeft}>
-                <Text style={styles.itemText}>ID: {props.id}</Text>
                 <Text style={styles.itemText}>Numero: {props.number}</Text>
+                <Text style={styles.itemText}>ID: {props.id}</Text>
                 <Text style={styles.itemText}>Criado em: {props.date}</Text>
             </View>
             <View style={styles.itemRight}>
@@ -28,7 +21,7 @@ const Redacoes = (props) => {
                 <TouchableOpacity style={styles.button}>
                     <Ionicons name='create-outline' size={25} style={styles.icon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={props.handle}>
                     <Ionicons name='download-outline' size={25} style={styles.icon} />
                 </TouchableOpacity>
 

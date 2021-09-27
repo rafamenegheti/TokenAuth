@@ -1,36 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { View, StyleSheet, Text, StatusBar, KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet, Text, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
 import Redacoes from '../components/Redacaoes';
 import { AsyncStorage, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-
-
-
-import {
-    StyledContainer,
-    InnerContainer,
-    PageLogo,
-    PageTitle,
-    SubTitle,
-    StyledFormArea,
-    LeftIcon,
-    StyledInputLabel,
-    StyledTextInput,
-    RightIcon,
-    Colors,
-    StyledButton,
-    ButtonText,
-    MsgBox,
-    Line,
-    NormalText,
-    StyledNormalButton,
-    ImageBackground,
-    ErrorCaption,
-    ListContainer
-} from './../components/styles';
-import { BottomNavigation } from 'react-native-paper';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import * as Permissions from 'expo-permissions';
 
 
 
@@ -45,7 +21,9 @@ const Home = ({ navigation }) => {
     const [accesToken, setAccesToken] = React.useState('');
     const [alunoRedacoes, setAlunoRedacoes] = React.useState('');
 
-    //useEffect para atualizar a variavel de estado
+
+
+
     /*
         useEffect(() => {
     
@@ -53,11 +31,9 @@ const Home = ({ navigation }) => {
     */
 
 
+
+
     //Pega as informções que estao no localStorage
-
-
-
-
     saveRedacoesOnCache = async () => {
         try {
             await AsyncStorage.setItem(
@@ -119,7 +95,7 @@ const Home = ({ navigation }) => {
         }
     };
 
-    //gerencia o logOf, volta a tela e chama a função para limpar o cache
+    //gerencia o logOf, volta a tela e chama a função para limpar o localStorage
     function handleLogOut() {
         cleanCache();
         navigation.reset({
@@ -176,68 +152,104 @@ const Home = ({ navigation }) => {
             }
             )
     }
-/*
+
+
+    /*
+        function getProps() {
+            if (alunoRedacoes != '') {
+                for (let i = 0; i < alunoRedacoes.length; i++) {
+                    console.log(alunoRedacoes.length)
+                    return (<Redacoes number={alunoRedacoes[i].numero} date ={alunoRedacoes[i].created_at}/>)
+                }
+            } else {
+                return (
+                    <Redacoes number="carregando..." />
+                )
+            }
+        }
+    */
+
+
+
+
+
+
+    //Faz o download da redacao
+    function downloadFile() {
+        const uri = "https://assets.pontue.com.br/app/9a6a8780-0fcd-11eb-9fac-e38618316345/redacoes/91932f00-6b9a-11eb-883e-9fed48e7451a/VLV3tkMaOKZ7OeNiq306yFXMihYEeHrXFJ68PTym.jpeg"
+        let fileUri = FileSystem.documentDirectory + "small.jpeg";
+        FileSystem.downloadAsync(uri, fileUri)
+            .then(({ uri }) => {
+                alert("Sua redação esta sendo baixada e em alguns segundos aparecera em sua galeria")
+                saveFile(uri);
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    }
+
+
+
+    //Salva o arquivo no dispositivo
+    saveFile = async (fileUri) => {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status === "granted") {
+            const asset = await MediaLibrary.createAssetAsync(fileUri)
+            await MediaLibrary.createAlbumAsync("Redacões Pontue", asset, false)
+        }
+    }
+
+
+    const handleDownload = (event) => {
+        console.log(event.target.value)
+        //downloadFile()
+    }
+
+
+
+    //Gera o componente de acordo com as redações devolvidas pela API
     function getProps() {
         if (alunoRedacoes != '') {
-            for (let i = 0; i < alunoRedacoes.length; i++) {
-                console.log(alunoRedacoes.length)
-                return (<Redacoes number={alunoRedacoes[i].numero} date ={alunoRedacoes[i].created_at}/>)
-            }
+            return alunoRedacoes.map((value) => <Redacoes key={value.numero} id={value.id} number={value.numero} date={value.created_at}
+                handle={handleDownload} />)
         } else {
             return (
-                <Redacoes number="carregando..." />
+                <View style={[styles.loading]}>
+                    <ActivityIndicator size="small" color="#0000ff" />
+                </View>
             )
         }
     }
-*/
-
-function getProps() {
-    if (alunoRedacoes != '') {
-        return alunoRedacoes.map((value) => <Redacoes number={value.numero} date ={value.created_at}/>)
-    } else {
-        return (
-            <Redacoes number="carregando..." />
-        )
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
     return (
-
         <View style={styles.container} >
             <StatusBar barStyle='dark-content'
                 backgroundColor='#E6E1DE' />
-            <TouchableOpacity style={styles.button} onPress={handleLogOut}>
-                <Ionicons name="log-out-outline" size={30} style={styles.icon} />
-            </TouchableOpacity>
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.button} onPress={handleLogOut}>
+                    <Ionicons name="log-out-outline" size={30} style={styles.icon} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.buttonAdd}>
+                    <View style={styles.addWrapper}>
+                        <Text >+</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
             <View style={styles.redacaoWrapper} >
                 <View style={styles.views}>
                     <Text style={styles.sectionTitle}> suas redações </Text>
                 </View>
-                <View style={styles.items}>
-                    {getProps()}
-                </View>
+                <ScrollView>
+                    <View style={styles.items}>
+                        {getProps()}
+                    </View>
+                </ScrollView>
             </View>
-            <TouchableOpacity style={styles.buttonAdd}>
-                <View style={styles.addWrapper}>
-                    <Text >+</Text>
-                </View>
-            </TouchableOpacity>
-        </View>
 
+        </View>
     )
 }
 
@@ -274,11 +286,12 @@ const styles = StyleSheet.create({
     },
     buttonAdd: {
         marginLeft: 320,
-        marginTop: 443
+        marginTop: -35,
+        
     },
     addWrapper: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         backgroundColor: '#FFF',
         borderRadius: 60,
         justifyContent: 'center',
@@ -286,7 +299,15 @@ const styles = StyleSheet.create({
         borderColor: '#C0C0C0',
         borderWidth: 2,
     },
+    loading: {
+        flex: 1,
+        backgroundColor: '#E6E1DE',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    header: {
+        flexDirection: 'column'
+    }
 
 });
 export default Home;
-
