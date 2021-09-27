@@ -20,6 +20,7 @@ const Home = ({ navigation }) => {
     const [idAluno, setIdAluno] = React.useState('');
     const [accesToken, setAccesToken] = React.useState('');
     const [alunoRedacoes, setAlunoRedacoes] = React.useState('');
+    const [urlRedacao, setUrlRedacao] = React.useState('');
 
 
 
@@ -175,12 +176,12 @@ const Home = ({ navigation }) => {
 
 
     //Faz o download da redacao
-    function downloadFile() {
-        const uri = "https://assets.pontue.com.br/app/9a6a8780-0fcd-11eb-9fac-e38618316345/redacoes/91932f00-6b9a-11eb-883e-9fed48e7451a/VLV3tkMaOKZ7OeNiq306yFXMihYEeHrXFJ68PTym.jpeg"
+    function downloadFile(id) {
+        const uri = id
         let fileUri = FileSystem.documentDirectory + "small.jpeg";
         FileSystem.downloadAsync(uri, fileUri)
             .then(({ uri }) => {
-                alert("Sua redação esta sendo baixada e em alguns segundos aparecera em sua galeria")
+                alert("A redação esta sendo baixada e aparecerá na galeria uma uma pasta chamada Recações Pontue")
                 saveFile(uri);
             })
             .catch(error => {
@@ -200,9 +201,43 @@ const Home = ({ navigation }) => {
     }
 
 
-    const handleDownload = (event) => {
-        console.log(event.target.value)
+    const getIdRedacao = async (b, id) =>  {
+        const AuthStr = 'Bearer '.concat(b);
+        await axios.get(`https://desafio.pontue.com.br/redacao/${id}`,
+            {
+                headers: {
+                    'Authorization': AuthStr,
+                    "User-Agent": 'PostmanRuntime/7.28.4',
+                    'Accept': '*/*',
+                    "Accept-Encoding": 'gzip, deflate, br',
+                    'Connection': 'keep-alive',
+                    "Access-Control-Request-Headers": "authorization,x-requested-with"
+                }
+            })
+            .then(function (response) {
+                //setAlunoRedacoes(response.data.data)
+                    //console.log(response.data.data.urls[0].url)
+                    setUrlRedacao(response.data.data.urls[0].url)
+                    //return(response.data.data.urls[0].url)
+            })
+            .catch(function (error) {
+                console.log(error)
+                console.log('bucera')
+                
+            }
+            )
+        
+
+    }
+
+    const handleDownload = async (id) => {
+        //console.log(await getIdRedacao(accesToken, id))
+        //downloadFile(idd)
+        //console.log(getIdRedacao(accesToken, id))
+        //console.log(id)
         //downloadFile()
+        getIdRedacao(accesToken, id)
+        downloadFile(urlRedacao)
     }
 
 
@@ -210,8 +245,9 @@ const Home = ({ navigation }) => {
     //Gera o componente de acordo com as redações devolvidas pela API
     function getProps() {
         if (alunoRedacoes != '') {
-            return alunoRedacoes.map((value) => <Redacoes key={value.numero} id={value.id} number={value.numero} date={value.created_at}
-                handle={handleDownload} />)
+            return (
+                alunoRedacoes.map((value) => <Redacoes key={value.numero} id={value.id} number={value.numero} date={value.created_at} handle={ () =>  handleDownload(value.id)} />)
+            )
         } else {
             return (
                 <View style={[styles.loading]}>
