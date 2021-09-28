@@ -1,4 +1,4 @@
-# autenticacaoComHash
+# autenticacaoComToken
 # Para testar o app siga os passos:
 
 # 1) Tenha o Expo e o Node instalado em versões atuais
